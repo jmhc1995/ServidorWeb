@@ -2,24 +2,79 @@
  * Created by JoseMiguel on 3/25/2019.
  * Some parts are taken from http://www.jcgonzalez.com/java-socket-mini-server-http-ejemplo
  */
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
+import java.lang.Object;
+import java.util.Hashtable;
 
 public class Server extends Thread {
     private Socket socket;
     private static final int METHOD = 0;
     private static final int RESOURCE = 1;
+    public String[] media = {".css",".csv", ".doc", ".docx", ".exe", ".gif", ".html", ".jar", ".java", ".jpeg", ".jpe", ".jpg", ".js", ".latex", ".mp3", ".mp4", ".png", ".rgb", ".shtml", ".xhtml"};
+    public String[] mimeType = {"text/css", "text/csv", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/x-msdos-program", "image/gif", "text/html", "application/java-archive", "text/x-java", "image/jpeg", "image/jpeg", "image/jpeg", "application/x-javascript", "application/x-latex", "audio/mpeg", "video/mp4", "image/png", "image/x-rgb", "text/html", "application/xhtml+xml"};
+    public Hashtable<String, String> mimeTypesVerify = new Hashtable<String, String>();
+
     private View view;
 
     Server (Socket socket) {
         this.socket = socket;
         this.view = new View();
+        this.fillHash();// fill the hash with the mimetypes
         this.start(); //Runs the thread
     }
+
+    public void fillHash(){
+        int arrayLength = this.media.length;
+
+        for (int iteradorArrays = 0; iteradorArrays < arrayLength ; iteradorArrays++ ){
+            String key = this.media[iteradorArrays];
+            String value = this.mimeType [iteradorArrays];
+
+            this.mimeTypesVerify.put(key, value);
+        }
+    }
+
+    public String extractExtension(String file){
+        String division[] = file.split("\\.");
+        String extension = "."+ division[1];
+        return extension;
+
+    }
+
+    public void GET(String mimeType, PrintWriter out, BufferedReader in){
+
+        int postDataI = -1;
+        String line = " ";
+        try {
+            while ((line = in.readLine()) != null && (line.length() != 0)) {
+                System.out.println("HTTP-HEADER: " + line);
+                if (line.indexOf("Content-Length:") > -1) {
+                    postDataI = new Integer(
+                            line.substring(
+                                    line.indexOf("Content-Length:") + 16,
+                                    line.length())).intValue();
+                }
+            }
+            String postData = "";
+            // lee el post data
+            if (postDataI > 0) {
+                char[] charArray = new char[postDataI];
+                in.read(charArray, 0, postDataI);
+                postData = new String(charArray);
+            }
+
+            out.println("HTTP/1.1 200 OK");
+            out.println("Content-Type: " + mimeType);
+            out.println("Server: MINISERVER");
+            //TODO printwrite the content of the request
+        }catch(IOException e){
+            System.err.println(e);
+        }
+
+
+    }
+
 
     @Override
     public void run() {
@@ -31,22 +86,24 @@ public class Server extends Thread {
             line = in.readLine(); //Reads first line
             String request_method = line; //TODO Verify if we need it
             String method[] = line.split(" ");
+            String extension = extractExtension(method[1]);
+
 
             if(true) {
                 view.printNotFound(out);
                 out.close();
                 socket.close();
             }
-/**
+
             //TODO: If skeleton
             if (method[METHOD].compareTo("GET") == 0 || method[0].compareTo("POST") == 0 || method[0].compareTo("HEAD") == 0) {
-                if(method[RESOURCE].compareTo("holi") == 0) { //TODO change condition. Verify if resource exists
+                if(true) { //TODO change condition. Verify if resource exists
                     if (method[0].compareTo("POST") == 0) {
                         //TODO 200 ok and post implementation
-                    } else if (true) {//TODO Verify myme type
-                        //TODO 200 OK
+                    } else if (mimeTypesVerify.containsKey(extension)) {//TODO Verify myme type
+                        out.println("HTTP/1.0 200 OK\r\n");// 200 ok
                         if(method[0].compareTo("GET") == 0) {
-                            //TODO
+                            //this.GET(mimeTypesVerify.get(extension),out,in);
                         } else {
                             //TODO It's a head
                         }
@@ -54,13 +111,12 @@ public class Server extends Thread {
                         //TODO Error 406
                     }
                 } else {
-                    view.printNotFound(out);
                     //TODO Error 404
                 }
             } else {
                 //TODO Error 501
             }
-*/
+
             /*
             System.out.println("HTTP-HEADER: " + line);
             line = "";
