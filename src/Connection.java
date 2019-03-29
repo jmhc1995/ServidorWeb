@@ -10,7 +10,7 @@ public class Connection {
     public static void main(String[] args) {
         try {
             ServerSocket server = new ServerSocket(PORT);
-
+            System.out.println("MiniServer active " + PORT);
             while (true) { //For every request on PORT
                 new Server(server.accept());
             }

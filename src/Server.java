@@ -13,9 +13,11 @@ public class Server extends Thread {
     private Socket socket;
     private static final int METHOD = 0;
     private static final int RESOURCE = 1;
+    private View view;
 
     Server (Socket socket) {
         this.socket = socket;
+        this.view = new View();
         this.start(); //Runs the thread
     }
 
@@ -30,6 +32,12 @@ public class Server extends Thread {
             String request_method = line; //TODO Verify if we need it
             String method[] = line.split(" ");
 
+            if(true) {
+                view.printNotFound(out);
+                out.close();
+                socket.close();
+            }
+/**
             //TODO: If skeleton
             if (method[METHOD].compareTo("GET") == 0 || method[0].compareTo("POST") == 0 || method[0].compareTo("HEAD") == 0) {
                 if(method[RESOURCE].compareTo("holi") == 0) { //TODO change condition. Verify if resource exists
@@ -43,16 +51,16 @@ public class Server extends Thread {
                             //TODO It's a head
                         }
                     } else {
-                            //TODO Error 406
-                        }
+                        //TODO Error 406
+                    }
                 } else {
+                    view.printNotFound(out);
                     //TODO Error 404
                 }
             } else {
                 //TODO Error 501
             }
-
-
+*/
             /*
             System.out.println("HTTP-HEADER: " + line);
             line = "";
