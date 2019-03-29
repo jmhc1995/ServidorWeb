@@ -18,7 +18,7 @@ public class Server extends Thread {
 
     Server (Socket socket) {
         this.socket = socket;
-        this.fillHash();
+        this.fillHash();// fill the hash with the mimetypes
         this.start(); //Runs the thread
     }
 
