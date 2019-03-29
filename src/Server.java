@@ -8,15 +8,41 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.lang.Object;
+import java.util.Hashtable;
 
 public class Server extends Thread {
     private Socket socket;
     private static final int METHOD = 0;
     private static final int RESOURCE = 1;
+    private String[] media = {".css",".csv", ".doc", ".docx", ".exe", ".gif", ".html", ".jar", ".java", ".jpeg", ".jpe", ".jpg", ".js", ".latex", ".mp3", ".mp4", ".png", ".rgb", ".shtml", ".xhtml"};
+    private String[] mimeType = {"text/css", "text/csv", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/x-msdos-program", "image/gif", "text/html", "application/java-archive", "text/x-java", "image/jpeg", "image/jpeg", "image/jpeg", "application/x-javascript", "application/x-latex", "audio/mpeg", "video/mp4", "image/png", "image/x-rgb", "text/html", "application/xhtml+xml"};
+    private Hashtable<String, String> mimeTypesVerify;
+
 
     Server (Socket socket) {
         this.socket = socket;
+        this.fillHash();
+        System.out.println(this.mimeTypesVerify.elements());
         this.start(); //Runs the thread
+    }
+
+    public void fillHash(){
+        int arrayLength = this.media.length;
+
+        for (int iteradorArrays = 0; iteradorArrays < arrayLength ; iteradorArrays++ ){
+            String key = this.media[iteradorArrays];
+            String value = this.mimeType [iteradorArrays];
+
+            this.mimeTypesVerify.put(key, value);
+        }
+    }
+
+    public String extractExtension(String file){
+        String division[] = file.split(".");
+        String extension = "."+ division[1];
+        return extension;
+
     }
 
     @Override
@@ -29,6 +55,7 @@ public class Server extends Thread {
             line = in.readLine(); //Reads first line
             String request_method = line; //TODO Verify if we need it
             String method[] = line.split(" ");
+
 
             //TODO: If skeleton
             if (method[METHOD].compareTo("GET") == 0 || method[0].compareTo("POST") == 0 || method[0].compareTo("HEAD") == 0) {
@@ -91,4 +118,9 @@ public class Server extends Thread {
             e.printStackTrace();
         }
     }
+
+
+
+
+
 }

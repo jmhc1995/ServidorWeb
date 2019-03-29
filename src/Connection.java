@@ -11,10 +11,10 @@ public class Connection {
         try {
             ServerSocket server = new ServerSocket(PORT);
 
-            while (true) { //For every request on PORT
-                new Server(server.accept());
-            }
-        } catch (Exception e) {
+                while (true) { //For every request on PORT
+                    new Server(server.accept());
+                }
+            } catch (Exception e) {
         }
     }
 }
