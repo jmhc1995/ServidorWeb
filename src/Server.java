@@ -89,11 +89,13 @@ public class Server extends Thread {
             String extension = extractExtension(method[1]);
 
 
+            /*
+            //Prueba de 404
             if(true) {
                 view.printNotFound(out);
                 out.close();
                 socket.close();
-            }
+            }*/
 
             //TODO: If skeleton
             if (method[METHOD].compareTo("GET") == 0 || method[0].compareTo("POST") == 0 || method[0].compareTo("HEAD") == 0) {
