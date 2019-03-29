@@ -5,7 +5,7 @@
 import java.net.ServerSocket; //Socket util
 
 public class Connection {
-    private static final int PORT = 8080; //Default port
+    private static final int PORT = 5000; //Default port
 
     public static void main(String[] args) {
         try {
@@ -15,6 +15,7 @@ public class Connection {
                     new Server(server.accept());
                 }
             } catch (Exception e) {
+            System.err.println(e);
         }
     }
 }
