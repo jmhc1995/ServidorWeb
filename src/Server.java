@@ -10,7 +10,7 @@ import java.util.Hashtable;
 public class Server extends Thread {
     private Socket socket;
     private static final int METHOD = 0;
-    private static final int RESOURCE = 1;
+    private static final int URL = 1;
     public String[] media = {".css",".csv", ".doc", ".docx", ".exe", ".gif", ".html", ".jar", ".java", ".jpeg", ".jpe", ".jpg", ".js", ".latex", ".mp3", ".mp4", ".png", ".rgb", ".shtml", ".xhtml"};
     public String[] mimeType = {"text/css", "text/csv", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/x-msdos-program", "image/gif", "text/html", "application/java-archive", "text/x-java", "image/jpeg", "image/jpeg", "image/jpeg", "application/x-javascript", "application/x-latex", "audio/mpeg", "video/mp4", "image/png", "image/x-rgb", "text/html", "application/xhtml+xml"};
     public Hashtable<String, String> mimeTypesVerify = new Hashtable<String, String>();
@@ -85,9 +85,17 @@ public class Server extends Thread {
             String line; //Line to be read
             line = in.readLine(); //Reads first line
             String request_method = line; //TODO Verify if we need it
-            String method[] = line.split(" ");
-            System.out.println(line);
+
+            //Header variables
+            String method[] = line.split(" "); //Method GET, POST, HEAD
+            String referer = getInfo("Referer:", in); // Get referer
             String extension = extractExtension(method[1]);
+
+            //Verifies if header has referer and split into hostname only
+            if(referer.compareTo("") != 0) {
+                referer = getReferer(referer);
+                System.out.println("Has referer: " + referer);
+            }
 
 
 
@@ -104,10 +112,12 @@ public class Server extends Thread {
                     if (method[0].compareTo("POST") == 0) {
                         //TODO 200 ok and post implementation
                     } else if (mimeTypesVerify.containsKey(extension)) {//TODO Verify myme type
-                        out.println("HTTP/1.0 200 OK\r\n");// 200 ok
+                        out.println("HTTP/1.1 200 OK\r\n");// 200 ok
                         if(method[0].compareTo("GET") == 0) {
                             //this.GET(mimeTypesVerify.get(extension),out,in);
+                            //view.writeInLog("GET", referer, method[URL], "DATA"); //Writes the successful GET TODO post DATA. Verify if is writing
                         } else {
+                            //view.writeInLog("HEAD", referer, method[URL], "DATA"); //Writes the successful GET TODO post DATA. Verifies if is writing
                             //TODO It's a head
                         }
                     } else {
@@ -160,5 +170,35 @@ public class Server extends Thread {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+
+    //Get info if exist line exists
+    private String getInfo(String field, BufferedReader in) {
+        String info = "";
+        String line = "";
+        boolean found = false;
+
+        try {
+            while ((line = in.readLine()) != null && (line.length() != 0) && !found) {
+                if (line.indexOf(field) > -1) {
+                    System.out.println("Has info " + field);
+                    info = line.substring(field.length());
+                    found = true;
+                }
+            }
+        } catch (IOException e) {
+
+        }
+
+        return info;
+    }
+
+    //Get hostname from url like  http://localhost:8080/
+    private String getReferer(String referer) {
+        String array[] = referer.split("//");
+        array = array[1].split(":");
+
+        return array[0];
     }
 }

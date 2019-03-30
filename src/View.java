@@ -72,7 +72,7 @@ public class View {
     }
 
     //Print in server log.
-    public void printInLog(){//String method, String referer, String url, String Data) {
+    public void writeInLog(String method, String referer, String url, String data) {
         try {
             writer.write(String.format(logFormat, "Método", new Timestamp(System.currentTimeMillis()).getTime(), "Servidor", "Refiere", "URL", "Datos"));
            // writer.write(String.format("%s%n", rowSeparator));
