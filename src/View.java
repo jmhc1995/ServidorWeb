@@ -23,11 +23,13 @@ public class View {
         logFormat = "%-12s |%-26s |%-14s |%-13s |%-20s |%-25s%n";
        // rowSeparator = "---------------------------------------------------------------------------------------------------------------------------";
         //Initialises server log
+
         try {
             writer = new BufferedWriter(new FileWriter("server/log.txt"));
             writer.write(String.format(logFormat, "Método", "Estampilla de Tiempo", "Servidor", "Refiere", "URL", "Datos"));
             //writer.write(String.format("%s%n", rowSeparator));
             writer.close();
+
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -73,12 +75,14 @@ public class View {
 
     //Print in server log.
     public void writeInLog(String method, String referer, String url, String data) {
-        try {
-            writer.write(String.format(logFormat, "Método", new Timestamp(System.currentTimeMillis()).getTime(), "Servidor", "Refiere", "URL", "Datos"));
-           // writer.write(String.format("%s%n", rowSeparator));
-            writer.close();
-        } catch (Exception e) {
-            System.out.println(e);
+        try(FileWriter fw = new FileWriter("server/log.txt", true);
+            BufferedWriter bw = new BufferedWriter(fw);
+            PrintWriter out = new PrintWriter(bw))
+        {
+            out.print(String.format(String.format(logFormat, method, new Timestamp(System.currentTimeMillis()).getTime(), "localhost", referer, url, data)));
+            //more code
+        } catch (IOException e) {
+            //exception handling left as an exercise for the reader
         }
     }
  }

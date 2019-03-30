@@ -1,1 +1,3 @@
 Método       |Estampilla de Tiempo       |Servidor       |Refiere       |URL                  |Datos                    
+GET          |1553983113844              |localhost      |              |/                    |                         
+GET          |1553983118706              |localhost      |              |/                    |                         
