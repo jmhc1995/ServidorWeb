@@ -40,7 +40,11 @@ public class Server extends Thread {
 
     public String extractExtension(String file){
         String division[] = file.split("\\.");
-        String extension = "."+ division[1];
+        String extension = "none";
+        int length = division.length;
+        if (length > 1){
+            extension ="."+ division[1];
+        }
         return extension;
 
     }
@@ -98,6 +102,7 @@ public class Server extends Thread {
 
             String info[] = getInfo(in, havePost); // Get referer and post information
             String extension = extractExtension(method[1]);
+            boolean mediaSupported = mimeTypesVerify.containsKey(extension);
 
             /*//Prueba de 404
             if(true) {
@@ -112,8 +117,8 @@ public class Server extends Thread {
                     if (method[0].compareTo("POST") == 0) {
                         out.println("HTTP/1.1 200 OK\r\n");// 200 ok
                         //view.writeInLog("POST", info[REFERER], method[URL], info[POST]); //Writes the successful GET TODO post DATA. Verify if is writing
-                    } else if (mimeTypesVerify.containsKey(extension)) {//TODO Verify myme type
-                        out.println("HTTP/1.1 200 OK\r\n");// 200 ok
+                    } else if (mediaSupported ) {//TODO Verify myme type
+                        out.println("HTTP/1.0 200 OK\r\n");// 200 ok
                         if(method[0].compareTo("GET") == 0) {
                             //this.GET(mimeTypesVerify.get(extension),out,in);
                             //view.writeInLog("GET", info[REFERER], method[URL], ""); //Writes the successful GET TODO Verify if is writing
