@@ -110,14 +110,15 @@ public class Server extends Thread {
             if (method[METHOD].compareTo("GET") == 0 || method[0].compareTo("POST") == 0 || method[0].compareTo("HEAD") == 0) {
                 if(true) { //TODO change condition. Verify if resource exists
                     if (method[0].compareTo("POST") == 0) {
-                        //TODO 200 ok and post implementation
+                        out.println("HTTP/1.1 200 OK\r\n");// 200 ok
+                        //view.writeInLog("POST", info[REFERER], method[URL], info[POST]); //Writes the successful GET TODO post DATA. Verify if is writing
                     } else if (mimeTypesVerify.containsKey(extension)) {//TODO Verify myme type
                         out.println("HTTP/1.1 200 OK\r\n");// 200 ok
                         if(method[0].compareTo("GET") == 0) {
                             //this.GET(mimeTypesVerify.get(extension),out,in);
-                            //view.writeInLog("GET", info[REFERER], method[URL], info[POST]); //Writes the successful GET TODO post DATA. Verify if is writing
+                            //view.writeInLog("GET", info[REFERER], method[URL], ""); //Writes the successful GET TODO Verify if is writing
                         } else {
-                            //view.writeInLog("HEAD", info[REFERER], method[URL], info[POST]); //Writes the successful GET TODO post DATA. Verifies if is writing
+                            //view.writeInLog("HEAD", info[REFERER], method[URL], ""); //Writes the successful GET TODO verifY if is writing
                             //TODO It's a head
                         }
                     } else {
