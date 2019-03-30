@@ -11,8 +11,10 @@ public class Connection {
         try {
             ServerSocket server = new ServerSocket(PORT);
             System.out.println("MiniServer active " + PORT);
+            View view = new View();
+
             while (true) { //For every request on PORT
-                new Server(server.accept());
+                new Server(view, server.accept());
             }
         } catch (Exception e) {
             System.err.println(e);

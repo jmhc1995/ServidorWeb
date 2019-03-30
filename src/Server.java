@@ -17,9 +17,9 @@ public class Server extends Thread {
 
     private View view;
 
-    Server (Socket socket) {
+    Server (View view, Socket socket) {
         this.socket = socket;
-        this.view = new View();
+        this.view = view;
         this.fillHash();// fill the hash with the mimetypes
         this.start(); //Runs the thread
     }
@@ -86,11 +86,12 @@ public class Server extends Thread {
             line = in.readLine(); //Reads first line
             String request_method = line; //TODO Verify if we need it
             String method[] = line.split(" ");
+            System.out.println(line);
             String extension = extractExtension(method[1]);
 
 
-            /*
-            //Prueba de 404
+
+            /*//Prueba de 404
             if(true) {
                 view.printNotFound(out);
                 out.close();
@@ -113,11 +114,14 @@ public class Server extends Thread {
                         //TODO Error 406
                     }
                 } else {
-                    //TODO Error 404
+                    view.printNotFound(out);
                 }
             } else {
                 //TODO Error 501
             }
+
+            out.close();
+            socket.close();
 
             /*
             System.out.println("HTTP-HEADER: " + line);

@@ -1,7 +1,5 @@
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.stream.Collectors;
 
@@ -17,6 +15,23 @@ import java.util.stream.Collectors;
  * Server
  */
 public class View {
+    private BufferedWriter writer; //Writes in log
+    private String logFormat;
+    //private String rowSeparator;
+
+    View() {
+        logFormat = "%-12s |%-26s |%-14s |%-13s |%-20s |%-25s%n";
+       // rowSeparator = "---------------------------------------------------------------------------------------------------------------------------";
+        //Initialises server log
+        try {
+            writer = new BufferedWriter(new FileWriter("server/log.txt"));
+            writer.write(String.format(logFormat, "Método", "Estampilla de Tiempo", "Servidor", "Refiere", "URL", "Datos"));
+            //writer.write(String.format("%s%n", rowSeparator));
+            writer.close();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
 
     /** Print on screen the type of error.
     * HTTP/1.1 404 Not Found
@@ -39,7 +54,7 @@ public class View {
         printWriter.println(stringFile); //Content
     }
 
-    //Writes file into socket
+    //Converts file into string
     private String getStringFile(String file) {
         String stringFile = "";
 
@@ -54,5 +69,16 @@ public class View {
         }
 
         return stringFile;
+    }
+
+    //Print in server log.
+    public void printInLog(){//String method, String referer, String url, String Data) {
+        try {
+            writer.write(String.format(logFormat, "Método", new Timestamp(System.currentTimeMillis()).getTime(), "Servidor", "Refiere", "URL", "Datos"));
+           // writer.write(String.format("%s%n", rowSeparator));
+            writer.close();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
  }
