@@ -37,7 +37,11 @@ public class Server extends Thread {
 
     public String extractExtension(String file){
         String division[] = file.split("\\.");
-        String extension = "."+ division[1];
+        String extension = "none";
+        int length = division.length;
+        if (length > 1){
+            extension ="."+ division[1];
+        }
         return extension;
 
     }
@@ -87,6 +91,7 @@ public class Server extends Thread {
             String request_method = line; //TODO Verify if we need it
             String method[] = line.split(" ");
             String extension = extractExtension(method[1]);
+            boolean mediaSupported = mimeTypesVerify.containsKey(extension);
 
 
             /*
@@ -102,7 +107,7 @@ public class Server extends Thread {
                 if(true) { //TODO change condition. Verify if resource exists
                     if (method[0].compareTo("POST") == 0) {
                         //TODO 200 ok and post implementation
-                    } else if (mimeTypesVerify.containsKey(extension)) {//TODO Verify myme type
+                    } else if (mediaSupported ) {//TODO Verify myme type
                         out.println("HTTP/1.0 200 OK\r\n");// 200 ok
                         if(method[0].compareTo("GET") == 0) {
                             //this.GET(mimeTypesVerify.get(extension),out,in);
