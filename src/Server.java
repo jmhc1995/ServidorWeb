@@ -14,8 +14,8 @@ public class Server extends Thread {
     private static final int REFERER = 0;
     private static final int POST = 1;
 
-    public String[] media = {".css",".csv", ".doc", ".docx", ".exe", ".gif", ".html", ".jar", ".java", ".jpeg", ".jpe", ".jpg", ".js", ".latex", ".mp3", ".mp4", ".png", ".rgb", ".shtml", ".xhtml"};
-    public String[] mimeType = {"text/css", "text/csv", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/x-msdos-program", "image/gif", "text/html", "application/java-archive", "text/x-java", "image/jpeg", "image/jpeg", "image/jpeg", "application/x-javascript", "application/x-latex", "audio/mpeg", "video/mp4", "image/png", "image/x-rgb", "text/html", "application/xhtml+xml"};
+    public String[] media = {".css",".csv", ".doc", ".docx", ".exe", ".gif", ".html", ".jar", ".java", ".jpeg", ".jpe", ".jpg", ".js", ".latex", ".mp3", ".mp4", ".png", ".rgb", ".shtml", ".xhtml", "none"};
+    public String[] mimeType = {"text/css", "text/csv", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/x-msdos-program", "image/gif", "text/html", "application/java-archive", "text/x-java", "image/jpeg", "image/jpeg", "image/jpeg", "application/x-javascript", "application/x-latex", "audio/mpeg", "video/mp4", "image/png", "image/x-rgb", "text/html", "application/xhtml+xml", "none"};
     public Hashtable<String, String> mimeTypesVerify = new Hashtable<String, String>();
 
     private View view;
@@ -51,6 +51,20 @@ public class Server extends Thread {
 
     public void GET(String mimeType, PrintWriter out, BufferedReader in){
 
+        if(mimeType.compareTo("none") == 0) {
+            out.println("HTTP/1.0 200 OK");
+            out.println("Content-Type: text/html; charset=utf-8");
+            out.println("Server: MINISERVER");
+            // este linea en blanco marca el final de los headers de la response
+            out.println("");
+            // Envía el HTML
+            out.println("<H1>Bienvenido al Mini Server</H1>");
+            out.println("<form name=\"input\" action=\"form_submited\" method=\"post\">");
+            out.println("Usuario: <input type=\"text\" name=\"user\"><input type=\"submit\"></form>");
+        } else {
+            System.out.println("Other GET");
+        }
+/*
         int postDataI = -1;
         String line = " ";
         try {
@@ -77,7 +91,7 @@ public class Server extends Thread {
             //TODO printwrite the content of the request
         }catch(IOException e){
             System.err.println(e);
-        }
+        }*/
 
 
     }
@@ -92,6 +106,7 @@ public class Server extends Thread {
             String line; //Line to be read
             line = in.readLine(); //Reads first line
             String request_method = line; //TODO Verify if we need it
+            System.out.println("HTTP-HEADER: " + line);
 
             //Header variables
             String method[] = line.split(" "); //Method GET, POST, HEAD
@@ -102,6 +117,7 @@ public class Server extends Thread {
 
             String info[] = getInfo(in, havePost); // Get referer and post information
             String extension = extractExtension(method[1]);
+            System.out.println("Extension: " + extension+ ".");
             boolean mediaSupported = mimeTypesVerify.containsKey(extension);
 
             /*//Prueba de 404
@@ -118,21 +134,26 @@ public class Server extends Thread {
                         out.println("HTTP/1.1 200 OK\r\n");// 200 ok
                         //view.writeInLog("POST", info[REFERER], method[URL], info[POST]); //Writes the successful GET TODO post DATA. Verify if is writing
                     } else if (mediaSupported ) {//TODO Verify myme type
-                        out.println("HTTP/1.0 200 OK\r\n");// 200 ok
-                        if(method[0].compareTo("GET") == 0) {
-                            //this.GET(mimeTypesVerify.get(extension),out,in);
-                            //view.writeInLog("GET", info[REFERER], method[URL], ""); //Writes the successful GET TODO Verify if is writing
+                        System.out.println("----------------------MEDIA SUPPORTED-------------------");
+                        if(method[METHOD].compareTo("GET") == 0) {
+                            System.out.println("It's a get");
+                            this.GET(mimeTypesVerify.get(extension),out,in);
+                            view.writeInLog("GET", info[REFERER], method[URL], ""); //Writes the successful GET TODO Verify if is writing
                         } else {
                             //view.writeInLog("HEAD", info[REFERER], method[URL], ""); //Writes the successful GET TODO verifY if is writing
                             //TODO It's a head
+                            System.out.println("Its a head");
                         }
                     } else {
+                        System.out.println("ERROR 406");
                         //TODO Error 406
                     }
                 } else {
                     view.printNotFound(out);
+                    System.out.println("ERROR 404");
                 }
             } else {
+                System.out.println("ERROR 501");
                 //TODO Error 501
             }
 
