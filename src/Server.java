@@ -14,8 +14,8 @@ public class Server extends Thread {
     private static final int REFERER = 0;
     private static final int POST = 1;
 
-    public String[] media = {".css",".csv", ".doc", ".docx", ".exe", ".gif", ".html", ".jar", ".java", ".jpeg", ".jpe", ".jpg", ".js", ".latex", ".mp3", ".mp4", ".png", ".rgb", ".shtml", ".xhtml", "none"};
-    public String[] mimeType = {"text/css", "text/csv", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/x-msdos-program", "image/gif", "text/html", "application/java-archive", "text/x-java", "image/jpeg", "image/jpeg", "image/jpeg", "application/x-javascript", "application/x-latex", "audio/mpeg", "video/mp4", "image/png", "image/x-rgb", "text/html", "application/xhtml+xml", "none"};
+    public String[] media = {".css",".csv", ".doc", ".docx", ".exe", ".gif", ".html",".ico", ".jar", ".java", ".jpeg", ".jpe", ".jpg", ".js", ".latex", ".mp3", ".mp4", ".png", ".rgb", ".shtml", ".xhtml", "none"};
+    public String[] mimeType = {"text/css", "text/csv", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/x-msdos-program", "image/gif", "text/html", "image/png", "application/java-archive", "text/x-java", "image/jpeg", "image/jpeg", "image/jpeg", "application/x-javascript", "application/x-latex", "audio/mpeg", "video/mp4", "image/png", "image/x-rgb", "text/html", "application/xhtml+xml", "none"};
     public Hashtable<String, String> mimeTypesVerify = new Hashtable<String, String>();
 
     private View view;
@@ -49,18 +49,10 @@ public class Server extends Thread {
 
     }
 
-    public void GET(String mimeType, PrintWriter out, BufferedReader in){
+    public void GET(String mimeType, PrintWriter out, BufferedReader in, String url){
 
         if(mimeType.compareTo("none") == 0) {
-            out.println("HTTP/1.0 200 OK");
-            out.println("Content-Type: text/html; charset=utf-8");
-            out.println("Server: MINISERVER");
-            // este linea en blanco marca el final de los headers de la response
-            out.println("");
-            // Envía el HTML
-            out.println("<H1>Bienvenido al Mini Server</H1>");
-            out.println("<form name=\"input\" action=\"form_submited\" method=\"post\">");
-            out.println("Usuario: <input type=\"text\" name=\"user\"><input type=\"submit\"></form>");
+           view.sendHTML(out, "prueba.html");
         } else {
             System.out.println("Other GET");
         }
@@ -137,7 +129,7 @@ public class Server extends Thread {
                         System.out.println("----------------------MEDIA SUPPORTED-------------------");
                         if(method[METHOD].compareTo("GET") == 0) {
                             System.out.println("It's a get");
-                            this.GET(mimeTypesVerify.get(extension),out,in);
+                            this.GET(mimeTypesVerify.get(extension),out,in, method[URL]);
                             view.writeInLog("GET", info[REFERER], method[URL], ""); //Writes the successful GET TODO Verify if is writing
                         } else {
                             //view.writeInLog("HEAD", info[REFERER], method[URL], ""); //Writes the successful GET TODO verifY if is writing

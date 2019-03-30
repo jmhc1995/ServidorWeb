@@ -1,3 +1,4 @@
 Método       |Estampilla de Tiempo       |Servidor       |Refiere       |URL                  |Datos                    
-GET          |1553983113844              |localhost      |              |/                    |                         
-GET          |1553983118706              |localhost      |              |/                    |                         
+GET          |1553984488789              |localhost      |              |/                    |                         
+GET          |1553984489161              |localhost      |localhost     |/favicon.ico         |                         
+GET          |1553984489175              |localhost      |localhost     |/favicon.ico         |                         

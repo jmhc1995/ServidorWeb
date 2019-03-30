@@ -44,7 +44,7 @@ public class View {
     Date: Tue, 04 May 2010 22:30:36 GMT
     Connection: close*/
     public void printNotFound(PrintWriter printWriter){
-        String stringFile = getStringFile("NotFound.html"); //Ask for the file and converts into string
+        String stringFile = getStringFile("server/NotFound.html"); //Ask for the file and converts into string
 
         printWriter.println("HTTP/1.1 404 Not Found");
         printWriter.println("Content-Length: " + stringFile.length());
@@ -56,13 +56,24 @@ public class View {
         printWriter.println(stringFile); //Content
     }
 
+    public void sendHTML(PrintWriter out, String resource) {
+        String stringFile = getStringFile("server/" + resource); //Ask for the file and converts into string
+
+        //Response header
+        out.println("HTTP/1.0 200 OK");
+        out.println("Content-Type: text/html; charset=utf-8");
+        out.println("Server: MINISERVER");
+        // este linea en blanco marca el final de los headers de la response
+        out.println("");
+        out.println(stringFile); //Content
+    }
+
     //Converts file into string
     private String getStringFile(String file) {
         String stringFile = "";
 
         try {
-            InputStream inFile = this.getClass().getClassLoader()
-                    .getResourceAsStream(file);
+            InputStream inFile = new FileInputStream(file);
             stringFile = new BufferedReader(new InputStreamReader(inFile))
                     .lines().collect(Collectors.joining("\n"));
 
