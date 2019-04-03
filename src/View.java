@@ -23,13 +23,14 @@ public class View {
         logFormat = "%-12s |%-26s |%-14s |%-13s |%-20s |%-25s%n";
        // rowSeparator = "---------------------------------------------------------------------------------------------------------------------------";
         //Initialises server log
-
         try {
-            writer = new BufferedWriter(new FileWriter("server/log.txt"));
-            writer.write(String.format(logFormat, "Método", "Estampilla de Tiempo", "Servidor", "Refiere", "URL", "Datos"));
-            //writer.write(String.format("%s%n", rowSeparator));
-            writer.close();
+            File tempFile = new File("server/log.txt");
 
+            if(!tempFile.exists()) {
+                writer = new BufferedWriter(new FileWriter("server/log.txt"));
+                writer.write(String.format(logFormat, "Método", "Estampilla de Tiempo", "Servidor", "Refiere", "URL", "Datos"));
+                writer.close();
+            }
         } catch (Exception e) {
             System.out.println(e);
         }
