@@ -49,12 +49,15 @@ public class Server extends Thread {
 
     }
 
-    public void GET(String mimeType, PrintWriter out, BufferedReader in, String url){
+
+
+    public void GET(String mimeType, PrintWriter out, DataOutputStream binaryOut, BufferedReader in, String url){
 
         if(mimeType.compareTo("none") == 0) {
-           view.sendHTML(out, "prueba.html");
+           view.sendHTML(out, binaryOut, "prueba.html", "text");
         } else {
             System.out.println("Other GET");
+            view.sendHTML(out, binaryOut, url,mimeType);
         }
 /*
         int postDataI = -1;
@@ -95,6 +98,7 @@ public class Server extends Thread {
             InputStream is = socket.getInputStream(); //Gets request from browser
             PrintWriter out = new PrintWriter(socket.getOutputStream()); //TODO: I think we don't need it :o Creates a new PrintWriter, without automatic line flushing, from an existing OutputStream. This convenience constructor creates the necessary intermediate OutputStreamWriter, which will convert characters into bytes using the default character encoding.
             BufferedReader in = new BufferedReader(new InputStreamReader(is)); //Saves input from browser on buffer
+            DataOutputStream binaryOut = new DataOutputStream(socket.getOutputStream());
             String line; //Line to be read
             line = in.readLine(); //Reads first line
             String request_method = line; //TODO Verify if we need it
@@ -109,6 +113,9 @@ public class Server extends Thread {
 
             String info[] = getInfo(in, havePost); // Get referer and post information
             String extension = extractExtension(method[1]);
+            if (extension.compareTo(".css")==0){
+                System.out.println("Hello there :D i'm a beautiful css ;)");
+            }
             System.out.println("Extension: " + extension+ ".");
             boolean mediaSupported = mimeTypesVerify.containsKey(extension);
 
@@ -124,12 +131,13 @@ public class Server extends Thread {
                 if(true) { //TODO change condition. Verify if resource exists
                     if (method[0].compareTo("POST") == 0) {
                         out.println("HTTP/1.1 200 OK\r\n");// 200 ok
-                        //view.writeInLog("POST", info[REFERER], method[URL], info[POST]); //Writes the successful GET TODO post DATA. Verify if is writing
+                        view.writeInLog("POST", info[REFERER], method[URL], ""); //Writes the successful GET TODO post DATA. Verify if is writing
+                        this.GET(mimeTypesVerify.get(extension),out, binaryOut, in, method[URL]);
                     } else if (mediaSupported ) {//TODO Verify myme type
                         System.out.println("----------------------MEDIA SUPPORTED-------------------");
                         if(method[METHOD].compareTo("GET") == 0) {
                             System.out.println("It's a get");
-                            this.GET(mimeTypesVerify.get(extension),out,in, method[URL]);
+                            this.GET(mimeTypesVerify.get(extension),out, binaryOut, in, method[URL]);
                             view.writeInLog("GET", info[REFERER], method[URL], ""); //Writes the successful GET TODO Verify if is writing
                         } else {
                             //view.writeInLog("HEAD", info[REFERER], method[URL], ""); //Writes the successful GET TODO verifY if is writing
@@ -187,6 +195,7 @@ public class Server extends Thread {
             out.close();
             socket.close();*/
         } catch (IOException e) {
+            System.err.println(e);
             e.printStackTrace();
         }
     }

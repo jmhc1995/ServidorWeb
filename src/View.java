@@ -1,3 +1,4 @@
+import javax.xml.crypto.Data;
 import java.io.*;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -57,16 +58,36 @@ public class View {
         printWriter.println(stringFile); //Content
     }
 
-    public void sendHTML(PrintWriter out, String resource) {
-        String stringFile = getStringFile("server/" + resource); //Ask for the file and converts into string
+    public void sendHTML(PrintWriter out, DataOutputStream binaryOut, String resource, String mimeType) {
+         String type = this.getType(mimeType);
+        if(type.compareTo("text")==0) {
+            String stringFile = getStringFile("server/" + resource); //Ask for the file and converts into string
+            //Response header
+            out.println("HTTP/1.0 200 OK");
+            out.println("Content-Type: "+mimeType+"; charset=utf-8");
+            out.println("Content-Length: " + stringFile.length());
+            out.println("Server: MINISERVER");
+            // este linea en blanco marca el final de los headers de la response
+            out.println("");
+            out.println(stringFile); //Content
+        }
+        else if(type.compareTo("image")==0){
+           byte[] data = this.getDataFile("server/" + resource);
 
-        //Response header
-        out.println("HTTP/1.0 200 OK");
-        out.println("Content-Type: text/html; charset=utf-8");
-        out.println("Server: MINISERVER");
-        // este linea en blanco marca el final de los headers de la response
-        out.println("");
-        out.println(stringFile); //Content
+            try {
+                binaryOut.writeBytes("HTTP/1.0 200 OK\r\n");
+                binaryOut.writeBytes("Content-Type: "+mimeType+"\r\n");
+                binaryOut.writeBytes("Content-Length: " + data.length);
+                binaryOut.writeBytes("\r\n\r\n");
+                binaryOut.write(data);
+                binaryOut.close();
+            } catch (IOException e){
+                System.err.println(e);
+            }
+
+        }
+
+
     }
 
     //Converts file into string
@@ -79,10 +100,25 @@ public class View {
                     .lines().collect(Collectors.joining("\n"));
 
         } catch (Exception e) {
-            System.out.println(e);
+            System.err.println(e);
         }
 
         return stringFile;
+    }
+
+    private byte[] getDataFile(String file){
+        File imageFile = new File(file);
+        byte[] data = new byte[(int) imageFile.length()];
+        try {
+
+            FileInputStream fis = new FileInputStream(imageFile);
+
+            fis.read(data);
+            fis.close();
+        } catch (Exception e){
+            System.err.println(e);
+        }
+        return data;
     }
 
     //Print in server log.
@@ -96,5 +132,13 @@ public class View {
         } catch (IOException e) {
             //exception handling left as an exercise for the reader
         }
+    }
+
+    public String getType(String mimeType){
+        String division[] = mimeType.split("/");
+        String type;
+
+        type = division[0];
+        return type;
     }
  }
