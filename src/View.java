@@ -45,6 +45,10 @@ public class View {
     X-Powered-By: ASP.NET
     Date: Tue, 04 May 2010 22:30:36 GMT
     Connection: close*/
+    /**
+     * Prints an html with the not found message
+     * @param printWriter Printwrite used to shows text in browser
+     */
     public void printNotFound(PrintWriter printWriter){
         String stringFile = getStringFile("server/NotFound.html"); //Ask for the file and converts into string
 

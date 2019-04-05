@@ -2,6 +2,11 @@
  * Created by JoseMiguel on 3/25/2019.
  * Some parts are taken from http://www.jcgonzalez.com/java-socket-mini-server-http-ejemplo
  */
+
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
 import java.io.*;
 import java.net.Socket;
 import java.lang.Object;
@@ -13,6 +18,7 @@ public class Server extends Thread {
     private static final int URL = 1;
     private static final int REFERER = 0;
     private static final int POST = 1;
+    private static final String DEFAULT = "/";
 
     public String[] media = {".css",".csv", ".doc", ".docx", ".exe", ".gif", ".html",".ico", ".jar", ".java", ".jpeg", ".jpe", ".jpg", ".js", ".latex", ".mp3", ".mp4", ".png", ".rgb", ".shtml", ".xhtml", "none"};
     public String[] mimeType = {"text/css", "text/csv", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/x-msdos-program", "image/gif", "text/html", "image/png", "application/java-archive", "text/x-java", "image/jpeg", "image/jpeg", "image/jpeg", "application/x-javascript", "application/x-latex", "audio/mpeg", "video/mp4", "image/png", "image/x-rgb", "text/html", "application/xhtml+xml", "none"};
@@ -27,6 +33,9 @@ public class Server extends Thread {
         this.start(); //Runs the thread
     }
 
+    /**
+     * Fills the mimetypes hash
+     */
     public void fillHash(){
         int arrayLength = this.media.length;
 
@@ -38,19 +47,34 @@ public class Server extends Thread {
         }
     }
 
+    /**
+     * Extract the extension from file
+     * @param file String containing resource asked by the browser
+     * @return String with the extension, if it doesn't have, returns none
+     */
     public String extractExtension(String file){
         String division[] = file.split("\\.");
-        String extension = "none";
+        String extension = "406";
         int length = division.length;
         if (length > 1){
             extension ="."+ division[1];
+        }
+        if(file.compareTo("/")==0){
+            extension = "none";
         }
         return extension;
 
     }
 
 
-
+    /**
+     * This method uses an object of class view to show the asked resources
+     * @param mimeType String containing the resource mimetype
+     * @param out Printwriter used to show the resources on browser, text only
+     * @param binaryOut Dataoutputstream to show resources, can show images
+     * @param in
+     * @param url String containing what is asked by browser
+     */
     public void GET(String mimeType, PrintWriter out, DataOutputStream binaryOut, BufferedReader in, String url){
 
         if(mimeType.compareTo("none") == 0) {
@@ -59,39 +83,12 @@ public class Server extends Thread {
             System.out.println("Other GET");
             view.sendHTML(out, binaryOut, url,mimeType);
         }
-/*
-        int postDataI = -1;
-        String line = " ";
-        try {
-            while ((line = in.readLine()) != null && (line.length() != 0)) {
-                System.out.println("HTTP-HEADER: " + line);
-                if (line.indexOf("Content-Length:") > -1) {
-                    postDataI = new Integer(
-                            line.substring(
-                                    line.indexOf("Content-Length:") + 16,
-                                    line.length())).intValue();
-                }
-            }
-            String postData = "";
-            // lee el post data
-            if (postDataI > 0) {
-                char[] charArray = new char[postDataI];
-                in.read(charArray, 0, postDataI);
-                postData = new String(charArray);
-            }
-
-            out.println("HTTP/1.1 200 OK");
-            out.println("Content-Type: " + mimeType);
-            out.println("Server: MINISERVER");
-            //TODO printwrite the content of the request
-        }catch(IOException e){
-            System.err.println(e);
-        }*/
-
 
     }
 
-
+    /**
+     * Runs the main function that controls the server, managing the cases
+     */
     @Override
     public void run() {
         try {
@@ -101,23 +98,29 @@ public class Server extends Thread {
             DataOutputStream binaryOut = new DataOutputStream(socket.getOutputStream());
             String line; //Line to be read
             line = in.readLine(); //Reads first line
-            String request_method = line; //TODO Verify if we need it
             System.out.println("HTTP-HEADER: " + line);
 
             //Header variables
             String method[] = line.split(" "); //Method GET, POST, HEAD
+            String file = method[1];
             boolean havePost = false;
             if(method[METHOD].compareTo("POST") == 0) {
                 havePost = true;
             }
 
             String info[] = getInfo(in, havePost); // Get referer and post information
-            String extension = extractExtension(method[1]);
-            if (extension.compareTo(".css")==0){
-                System.out.println("Hello there :D i'm a beautiful css ;)");
-            }
+            String extension = extractExtension(file);
+            boolean exist = true;
+
             System.out.println("Extension: " + extension+ ".");
             boolean mediaSupported = mimeTypesVerify.containsKey(extension);
+            boolean hasExtension = true;
+            if(extension.compareTo("406")==0){
+                hasExtension = false;
+            }
+            if(file.compareTo(DEFAULT)!=0){
+                exist = this.fileExist(file);
+            }
 
             /*//Prueba de 404
             if(true) {
@@ -126,13 +129,13 @@ public class Server extends Thread {
                 socket.close();
             }*/
 
-            //TODO: If skeleton
+
             if (method[METHOD].compareTo("GET") == 0 || method[0].compareTo("POST") == 0 || method[0].compareTo("HEAD") == 0) {
-                if(true) { //TODO change condition. Verify if resource exists
+                if(exist) { //TODO change condition. Verify if resource exists
                     if (method[0].compareTo("POST") == 0) {/************* POST *************/
                         view.writeInLog("POST", info[REFERER], method[URL], info[POST]); //Writes the successful POST
                         this.GET(mimeTypesVerify.get(extension),out, binaryOut, in, method[URL]);
-                    } else if (mediaSupported ) {
+                    } else if (mediaSupported && hasExtension ) {
                         System.out.println("----------------------MEDIA SUPPORTED-------------------");
                         if(method[METHOD].compareTo("GET") == 0) {
                             System.out.println("It's a get");
@@ -146,7 +149,6 @@ public class Server extends Thread {
                     } else {
                         System.out.println("ERROR 406");
                         view.printNoMediaSupported(out);
-                        //TODO Error 406
                     }
                 } else {
                     view.printNotFound(out);
@@ -160,43 +162,12 @@ public class Server extends Thread {
             out.close();
             socket.close();
 
-            /*
-            System.out.println("HTTP-HEADER: " + line);
-            line = "";
-            // busca post data
-            int postDataI = -1;
-            while ((line = in.readLine()) != null && (line.length() != 0)) {
-                System.out.println("HTTP-HEADER: " + line);
-                if (line.indexOf("Content-Length:") > -1) {
-                    postDataI = new Integer(
-                            line.substring(
-                                    line.indexOf("Content-Length:") + 16,
-                                    line.length())).intValue();
-                }
-            }
-            String postData = "";
-            // lee el post data
-            if (postDataI > 0) {
-                char[] charArray = new char[postDataI];
-                in.read(charArray, 0, postDataI);
-                postData = new String(charArray);
-            }
-            out.println("HTTP/1.0 200 OK");
-            out.println("Content-Type: text/html; charset=utf-8");
-            out.println("Server: MINISERVER");
-            // este linea en blanco marca el final de los headers de la response
-            out.println("");
-            // Envía el HTML
-            out.println("<H1>Bienvenido al Mini Server</H1>");
-            out.println("<H2>Request Method->" + request_method + "</H2>");
-            out.println("<H2>Post->" + postData + "</H2>");
-            out.println("<form name=\"input\" action=\"form_submited\" method=\"post\">");
-            out.println("Usuario: <input type=\"text\" name=\"user\"><input type=\"submit\"></form>");
-            out.close();
-            socket.close();*/
+
         } catch (IOException e) {
-            System.err.println(e);
-            e.printStackTrace();
+
+                System.err.println(e);
+                e.printStackTrace();
+
         }
     }
 
@@ -252,5 +223,13 @@ public class Server extends Thread {
         }
 
         return postData;
+    }
+
+    private boolean fileExist( String file){
+        boolean exist = false;
+        File f = new File("server"+file);
+        exist = f.exists();
+
+        return exist;
     }
 }
