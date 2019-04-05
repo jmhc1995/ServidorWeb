@@ -59,7 +59,14 @@ public class View {
     public void printNoMediaSupported(PrintWriter printWriter){
         String stringFile = getStringFile("server/NotAcceptable.html"); //Ask for the file and converts into string
 
-        printWriter.println("HTTP/1.1 404 Not Acceptable");
+        printWriter.println("HTTP/1.1 406 Not Acceptable");
+        completeHeader(stringFile, printWriter);
+    }
+
+    public void printNotImplemented(PrintWriter printWriter){
+        String stringFile = getStringFile("server/NotImplemented.html"); //Ask for the file and converts into string
+
+        printWriter.println("HTTP/1.1 501 Not Implemented");
         completeHeader(stringFile, printWriter);
     }
 

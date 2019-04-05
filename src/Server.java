@@ -119,7 +119,7 @@ public class Server extends Thread {
                 hasExtension = false;
             }
             if(file.compareTo(DEFAULT)!=0){
-                exist = this.fileExist(file);
+                exist = this.fileExist(file);// if is not default directory, check if file exist
             }
 
             /*//Prueba de 404
@@ -131,32 +131,34 @@ public class Server extends Thread {
 
 
             if (method[METHOD].compareTo("GET") == 0 || method[0].compareTo("POST") == 0 || method[0].compareTo("HEAD") == 0) {
-                if(exist) { //TODO change condition. Verify if resource exists
                     if (method[0].compareTo("POST") == 0) {/************* POST *************/
                         view.writeInLog("POST", info[REFERER], method[URL], info[POST]); //Writes the successful POST
                         this.GET(mimeTypesVerify.get(extension),out, binaryOut, in, method[URL]);
                     } else if (mediaSupported && hasExtension ) {
-                        System.out.println("----------------------MEDIA SUPPORTED-------------------");
-                        if(method[METHOD].compareTo("GET") == 0) {
-                            System.out.println("It's a get");
-                            this.GET(mimeTypesVerify.get(extension),out, binaryOut, in, method[URL]);
-                            view.writeInLog("GET", info[REFERER], method[URL], ""); //Writes the successful GET
-                        } else {
-                            //view.writeInLog("HEAD", info[REFERER], method[URL], ""); //Writes the successful GET TODO verifY if is writing
-                            //TODO It's a head
-                            System.out.println("Its a head");
+                        if(exist) {
+                            System.out.println("----------------------MEDIA SUPPORTED-------------------");
+                            if (method[METHOD].compareTo("GET") == 0) {
+                                System.out.println("It's a get");
+                                this.GET(mimeTypesVerify.get(extension), out, binaryOut, in, method[URL]);
+                                view.writeInLog("GET", info[REFERER], method[URL], ""); //Writes the successful GET
+                            } else {
+                                //view.writeInLog("HEAD", info[REFERER], method[URL], ""); //Writes the successful GET TODO verifY if is writing
+                                //TODO It's a head
+                                System.out.println("Its a head");
+                            }
+                        }
+                        else{
+                            view.printNotFound(out);
+                            System.out.println("ERROR 404");
                         }
                     } else {
                         System.out.println("ERROR 406");
                         view.printNoMediaSupported(out);
                     }
-                } else {
-                    view.printNotFound(out);
-                    System.out.println("ERROR 404");
-                }
+
             } else {
                 System.out.println("ERROR 501");
-                //TODO Error 501
+                view.printNotImplemented(out);
             }
 
             out.close();
