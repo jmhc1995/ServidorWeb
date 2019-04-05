@@ -54,7 +54,7 @@ public class Server extends Thread {
     public void GET(String mimeType, PrintWriter out, DataOutputStream binaryOut, BufferedReader in, String url){
 
         if(mimeType.compareTo("none") == 0) {
-           view.sendHTML(out, binaryOut, "prueba.html", "text");
+           view.sendHTML(out, binaryOut, "index.html", "text");
         } else {
             System.out.println("Other GET");
             view.sendHTML(out, binaryOut, url,mimeType);
@@ -130,14 +130,14 @@ public class Server extends Thread {
             if (method[METHOD].compareTo("GET") == 0 || method[0].compareTo("POST") == 0 || method[0].compareTo("HEAD") == 0) {
                 if(true) { //TODO change condition. Verify if resource exists
                     if (method[0].compareTo("POST") == 0) {/************* POST *************/
-                        view.writeInLog("POST", info[REFERER], method[URL], info[POST]); //Writes the successful GET TODO post DATA. Verify if is writing
+                        view.writeInLog("POST", info[REFERER], method[URL], info[POST]); //Writes the successful POST
                         this.GET(mimeTypesVerify.get(extension),out, binaryOut, in, method[URL]);
-                    } else if (mediaSupported ) {//TODO Verify myme type
+                    } else if (mediaSupported ) {
                         System.out.println("----------------------MEDIA SUPPORTED-------------------");
                         if(method[METHOD].compareTo("GET") == 0) {
                             System.out.println("It's a get");
                             this.GET(mimeTypesVerify.get(extension),out, binaryOut, in, method[URL]);
-                            view.writeInLog("GET", info[REFERER], method[URL], ""); //Writes the successful GET TODO Verify if is writing
+                            view.writeInLog("GET", info[REFERER], method[URL], ""); //Writes the successful GET
                         } else {
                             //view.writeInLog("HEAD", info[REFERER], method[URL], ""); //Writes the successful GET TODO verifY if is writing
                             //TODO It's a head
@@ -145,6 +145,7 @@ public class Server extends Thread {
                         }
                     } else {
                         System.out.println("ERROR 406");
+                        view.printNoMediaSupported(out);
                         //TODO Error 406
                     }
                 } else {

@@ -49,6 +49,17 @@ public class View {
         String stringFile = getStringFile("server/NotFound.html"); //Ask for the file and converts into string
 
         printWriter.println("HTTP/1.1 404 Not Found");
+        completeHeader(stringFile, printWriter);
+    }
+
+    public void printNoMediaSupported(PrintWriter printWriter){
+        String stringFile = getStringFile("server/NotAcceptable.html"); //Ask for the file and converts into string
+
+        printWriter.println("HTTP/1.1 404 Not Acceptable");
+        completeHeader(stringFile, printWriter);
+    }
+
+    public void completeHeader(String stringFile, PrintWriter printWriter) {
         printWriter.println("Content-Length: " + stringFile.length());
         printWriter.println("Content-Type: text/html");
         printWriter.println("Server: JavaServer");
@@ -84,10 +95,7 @@ public class View {
             } catch (IOException e){
                 System.err.println(e);
             }
-
         }
-
-
     }
 
     //Converts file into string
