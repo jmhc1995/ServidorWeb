@@ -21,7 +21,7 @@ public class View {
     //private String rowSeparator;
 
     View() {
-        logFormat = "%-12s |%-26s |%-14s |%-13s |%-20s |%-25s%n";
+        logFormat = "%-12s |%-26s |%-14s |%-13s |%-50s |%-25s%n";
        // rowSeparator = "---------------------------------------------------------------------------------------------------------------------------";
         //Initialises server log
         try {

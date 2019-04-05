@@ -129,9 +129,8 @@ public class Server extends Thread {
             //TODO: If skeleton
             if (method[METHOD].compareTo("GET") == 0 || method[0].compareTo("POST") == 0 || method[0].compareTo("HEAD") == 0) {
                 if(true) { //TODO change condition. Verify if resource exists
-                    if (method[0].compareTo("POST") == 0) {
-                        out.println("HTTP/1.1 200 OK\r\n");// 200 ok
-                        view.writeInLog("POST", info[REFERER], method[URL], ""); //Writes the successful GET TODO post DATA. Verify if is writing
+                    if (method[0].compareTo("POST") == 0) {/************* POST *************/
+                        view.writeInLog("POST", info[REFERER], method[URL], info[POST]); //Writes the successful GET TODO post DATA. Verify if is writing
                         this.GET(mimeTypesVerify.get(extension),out, binaryOut, in, method[URL]);
                     } else if (mediaSupported ) {//TODO Verify myme type
                         System.out.println("----------------------MEDIA SUPPORTED-------------------");
