@@ -86,6 +86,16 @@ public class Server extends Thread {
 
     }
 
+    public void HEAD(String mimeType, PrintWriter out, DataOutputStream binaryOut, BufferedReader in, String url){
+        if(mimeType.compareTo("none") == 0) {
+            view.sendHeader(out, "index.html", "text");
+        } else {
+            System.out.println("Other HEAD");
+            view.sendHeader(out, url,mimeType);
+        }
+
+    }
+
     /**
      * Runs the main function that controls the server, managing the cases
      */
@@ -142,8 +152,8 @@ public class Server extends Thread {
                                 this.GET(mimeTypesVerify.get(extension), out, binaryOut, in, method[URL]);
                                 view.writeInLog("GET", info[REFERER], method[URL], ""); //Writes the successful GET
                             } else {
-                                //view.writeInLog("HEAD", info[REFERER], method[URL], ""); //Writes the successful GET TODO verifY if is writing
-                                //TODO It's a head
+                                view.writeInLog("HEAD", info[REFERER], method[URL], ""); //Writes the successful GET TODO verifY if is writing
+                                this.HEAD(mimeTypesVerify.get(extension),out, binaryOut, in, method[URL]);
                                 System.out.println("Its a head");
                             }
                         }

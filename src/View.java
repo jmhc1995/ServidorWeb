@@ -109,6 +109,16 @@ public class View {
         }
     }
 
+    public void sendHeader(PrintWriter out, String resource, String mimeType){
+        String stringFile = getStringFile("server/" + resource);
+        out.println("HTTP/1.0 200 OK");
+        out.println("Content-Type: "+mimeType+"; charset=utf-8");
+        out.println("Content-Length: " + stringFile.length());
+        out.println("Server: MINISERVER");
+        // este linea en blanco marca el final de los headers de la response
+        out.println("");
+    }
+
     //Converts file into string
     private String getStringFile(String file) {
         String stringFile = "";

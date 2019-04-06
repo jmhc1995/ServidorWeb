@@ -194,3 +194,17 @@ GET          |1554502754256              |localhost      |localhost     |/index.
 GET          |1554502754302              |localhost      |localhost     |/styles.css                                        |                         
 GET          |1554502754327              |localhost      |localhost     |/imagotipo-ECCI-ver-negro.png                      |                         
 GET          |1554502754332              |localhost      |localhost     |/imagotipo-ECCI.png                                |                         
+GET          |1554587506667              |localhost      |              |/                                                  |                         
+GET          |1554587506883              |localhost      |localhost     |/styles.css                                        |                         
+GET          |1554587506911              |localhost      |localhost     |/imagotipo-ECCI-ver-negro.png                      |                         
+GET          |1554587506915              |localhost      |localhost     |/imagotipo-ECCI.png                                |                         
+GET          |1554587507222              |localhost      |localhost     |/favicon.ico                                       |                         
+GET          |1554587594781              |localhost      |localhost     |/css/style.css                                     |                         
+GET          |1554587595073              |localhost      |localhost     |/img/bg.jpg                                        |                         
+GET          |1554587609442              |localhost      |              |/imagotipo-ECCI.png                                |                         
+GET          |1554587654293              |localhost      |localhost     |/css/style.css                                     |                         
+GET          |1554587654465              |localhost      |localhost     |/img/bg.jpg                                        |                         
+GET          |1554587693595              |localhost      |localhost     |/css/style.css                                     |                         
+GET          |1554587693791              |localhost      |localhost     |/img/bg.jpg                                        |                         
+GET          |1554589031723              |localhost      |              |/                                                  |                         
+HEAD         |1554592927530              |localhost      |              |/                                                  |                         
