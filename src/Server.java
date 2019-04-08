@@ -19,6 +19,8 @@ public class Server extends Thread {
     private static final int REFERER = 0;
     private static final int POST = 1;
     private static final String DEFAULT = "/";
+    private String acceptContent = "";
+    private boolean userIsCurl = false;
     private static final int EXTENSION = 0;
     private static final int DATA = 1;
     private static final int FILE = 0;
@@ -34,6 +36,14 @@ public class Server extends Thread {
         this.view = view;
         this.fillHash();// fill the hash with the mimetypes
         this.start(); //Runs the thread
+    }
+
+    public void setAcceptContent(String acceptContent){
+        this.acceptContent = acceptContent;
+    }
+
+    public void setUserIsCurl(boolean userIsCurl){
+        this.userIsCurl = userIsCurl;
     }
 
     /**
@@ -126,6 +136,25 @@ public class Server extends Thread {
             String extension = extractExtension(fileName[FILE]);
             boolean exist = true;
 
+            String mimetype = mimeTypesVerify.get(extension); //to see if it is text, image...
+
+            boolean isInAccept = false;
+
+            if(userIsCurl) {
+                if (mimetype.compareTo("none") == 0) {//exception to type
+                    isInAccept = true;
+                }
+                if (acceptContent.indexOf(mimetype) != -1) { // to see if resource requested is in accept line
+                    isInAccept = true;
+                }
+                if(acceptContent.compareTo("*/*")==0){
+                    isInAccept = true;
+                }
+            }
+            else if(!userIsCurl){
+                isInAccept = true;
+            }
+
             System.out.println("Extension: " + extension+ ".");
             boolean mediaSupported = mimeTypesVerify.containsKey(extension);
             boolean hasExtension = true;
@@ -148,8 +177,19 @@ public class Server extends Thread {
             if (method[METHOD].compareTo("GET") == 0 || method[0].compareTo("POST") == 0 || method[0].compareTo("HEAD") == 0) {
                     if (method[0].compareTo("POST") == 0) {/************* POST *************/
                         view.writeInLog("POST", info[REFERER], method[URL], info[POST]); //Writes the successful POST
-                        this.GET(mimeTypesVerify.get(extension),out, binaryOut, in, method[URL]);
-                    } else if (mediaSupported && hasExtension ) {
+                        if (mediaSupported && hasExtension && isInAccept){
+                            if(exist){
+                                this.GET(mimeTypesVerify.get(extension),out, binaryOut, in, method[URL]);
+                            }
+                            else{
+                                view.printNotFound(out);
+                            }
+                        }
+                        else{
+                            view.printNoMediaSupported(out);
+                        }
+
+                    } else if (mediaSupported && hasExtension && isInAccept) {
                         if(exist) {
                             System.out.println("----------------------MEDIA SUPPORTED-------------------");
                             if (method[METHOD].compareTo("GET") == 0) {
@@ -213,6 +253,16 @@ public class Server extends Thread {
                 }
                 if (line.contains("Content-Length:") && havePost) {
                     contentLength = new Integer(line.substring(line.indexOf("Content-Length:") + 16)).intValue();
+                }
+                if(line.contains("Accept:")){
+                    String acceptContent = line.substring(line.indexOf("Accept:")+8, line.length());//to be used in run to check accept data vs file type
+                    this.setAcceptContent(acceptContent);
+                }
+                if(line.contains("User-Agent:")){
+                    String user = line.substring(line.indexOf("User_Agent:")+12, line.length());// to know if user is curl
+                    if(user.indexOf("curl")!=-1) {
+                        this.setUserIsCurl(true);
+                    }
                 }
             }
 

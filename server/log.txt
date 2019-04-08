@@ -295,3 +295,9 @@ GET          |1554700606859              |localhost      |localhost     |/styles
 GET          |1554700606894              |localhost      |localhost     |/imagotipo-ECCI-ver-negro.png                      |                         
 GET          |1554700606894              |localhost      |localhost     |/imagotipo-ECCI.png                                |                         
 GET          |1554700611944              |localhost      |localhost     |/get.html                                          |variable=asa&oculto=     
+GET          |1554704025884              |localhost      |              |/                                                  |                         
+GET          |1554704025985              |localhost      |localhost     |/styles.css                                        |                         
+GET          |1554704026019              |localhost      |localhost     |/imagotipo-ECCI.png                                |                         
+GET          |1554704026038              |localhost      |localhost     |/imagotipo-ECCI-ver-negro.png                      |                         
+GET          |1554704026210              |localhost      |localhost     |/favicon.ico                                       |                         
+GET          |1554704031566              |localhost      |              |/index.html                                        |                         
