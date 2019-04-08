@@ -38,10 +38,18 @@ public class Server extends Thread {
         this.start(); //Runs the thread
     }
 
+    /**
+     * Set acceptCotent
+     * @param acceptContent String to set
+     */
     public void setAcceptContent(String acceptContent){
         this.acceptContent = acceptContent;
     }
 
+    /**
+     * Set boolean if is curl or not
+     * @param userIsCurl Boolean to set
+     */
     public void setUserIsCurl(boolean userIsCurl){
         this.userIsCurl = userIsCurl;
     }
@@ -99,7 +107,13 @@ public class Server extends Thread {
 
     }
 
-    public void HEAD(String mimeType, PrintWriter out, DataOutputStream binaryOut, BufferedReader in, String url){
+    /**
+     * Manage the HEAD request
+     * @param mimeType String with mimetype
+     * @param out Printwriter to show resource to user agent
+     * @param url String with file in server
+     */
+    public void HEAD(String mimeType, PrintWriter out, String url){
         if(mimeType.compareTo("none") == 0) {
             view.sendHeader(out, "index.html", "text");
         } else {
@@ -203,7 +217,7 @@ public class Server extends Thread {
                                 view.writeInLog("GET", info[REFERER], fileName[FILE], data); //Writes the successful GET
                             } else {
                                 view.writeInLog("HEAD", info[REFERER], method[URL], data); //Writes the successful GET TODO verifY if is writing
-                                this.HEAD(mimeTypesVerify.get(extension),out, binaryOut, in, method[URL]);
+                                this.HEAD(mimeTypesVerify.get(extension),out, method[URL]);
                                 System.out.println("Its a head");
                             }
                         }
@@ -238,7 +252,14 @@ public class Server extends Thread {
     return "";
     }
 
-    //Get info if exist line exists
+
+
+    /**
+     * Gather info from request header
+     * @param in Bufferreader to read the lines from header
+     * @param havePost Boolean to know if has post info
+     * @return Strin array with the information
+     */
     private String[] getInfo(BufferedReader in, boolean havePost) {
         String info[] = {"", ""};
         String line = "";

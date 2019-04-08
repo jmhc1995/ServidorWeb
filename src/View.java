@@ -56,6 +56,7 @@ public class View {
         completeHeader(stringFile, printWriter);
     }
 
+    //to show 406 error
     public void printNoMediaSupported(PrintWriter printWriter){
         String stringFile = getStringFile("server/NotAcceptable.html"); //Ask for the file and converts into string
 
@@ -63,6 +64,7 @@ public class View {
         completeHeader(stringFile, printWriter);
     }
 
+    //to show 501 error
     public void printNotImplemented(PrintWriter printWriter){
         String stringFile = getStringFile("server/NotImplemented.html"); //Ask for the file and converts into string
 
@@ -70,6 +72,11 @@ public class View {
         completeHeader(stringFile, printWriter);
     }
 
+    /**
+     * Complete header to send answer request
+     * @param stringFile String with file
+     * @param printWriter Printwriter to answer request
+     */
     public void completeHeader(String stringFile, PrintWriter printWriter) {
         printWriter.println("Date: " + new Date());
         printWriter.println("Content-Length: " + stringFile.length());
@@ -80,6 +87,13 @@ public class View {
         printWriter.println(stringFile); //Content
     }
 
+    /**
+     * Send answer to GET request
+     * @param out Printwriter to send data
+     * @param binaryOut Dataoutpustream to show image data
+     * @param resource String with file to be shown
+     * @param mimeType String with the file mimetype
+     */
     public void sendHTML(PrintWriter out, DataOutputStream binaryOut, String resource, String mimeType) {
          String type = this.getType(mimeType);
         if(type.compareTo("text")==0) {
@@ -112,6 +126,12 @@ public class View {
         }
     }
 
+    /**
+     * Send information to answer HEAD request
+     * @param out Printwriter to show data
+     * @param resource String with file to show
+     * @param mimeType String with the mimetpe of the file
+     */
     public void sendHeader(PrintWriter out, String resource, String mimeType){
         String stringFile = getStringFile("server/" + resource);
         out.println("HTTP/1.0 200 OK");
@@ -139,6 +159,11 @@ public class View {
         return stringFile;
     }
 
+    /**
+     * Process images to send
+     * @param file String with image file
+     * @return Byte array containing image
+     */
     private byte[] getDataFile(String file){
         File imageFile = new File(file);
         byte[] data = new byte[(int) imageFile.length()];
@@ -167,6 +192,11 @@ public class View {
         }
     }
 
+    /**
+     * Extract tyoe from mimetype
+     * @param mimeType String with mimetype
+     * @return File type
+     */
     public String getType(String mimeType){
         String division[] = mimeType.split("/");
         String type;
