@@ -19,6 +19,9 @@ public class Server extends Thread {
     private static final int REFERER = 0;
     private static final int POST = 1;
     private static final String DEFAULT = "/";
+    private static final int EXTENSION = 0;
+    private static final int DATA = 1;
+    private static final int FILE = 0;
 
     public String[] media = {".css",".csv", ".doc", ".docx", ".exe", ".gif", ".html",".ico", ".jar", ".java", ".jpeg", ".jpe", ".jpg", ".js", ".latex", ".mp3", ".mp4", ".png", ".rgb", ".shtml", ".xhtml", "none"};
     public String[] mimeType = {"text/css", "text/csv", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/x-msdos-program", "image/gif", "text/html", "image/png", "application/java-archive", "text/x-java", "image/jpeg", "image/jpeg", "image/jpeg", "application/x-javascript", "application/x-latex", "audio/mpeg", "video/mp4", "image/png", "image/x-rgb", "text/html", "application/xhtml+xml", "none"};
@@ -102,6 +105,7 @@ public class Server extends Thread {
     @Override
     public void run() {
         try {
+            String data = "";
             InputStream is = socket.getInputStream(); //Gets request from browser
             PrintWriter out = new PrintWriter(socket.getOutputStream()); //TODO: I think we don't need it :o Creates a new PrintWriter, without automatic line flushing, from an existing OutputStream. This convenience constructor creates the necessary intermediate OutputStreamWriter, which will convert characters into bytes using the default character encoding.
             BufferedReader in = new BufferedReader(new InputStreamReader(is)); //Saves input from browser on buffer
@@ -112,14 +116,14 @@ public class Server extends Thread {
 
             //Header variables
             String method[] = line.split(" "); //Method GET, POST, HEAD
-            String file = method[1];
+            String fileName[] = method[1].split("\\?");
             boolean havePost = false;
             if(method[METHOD].compareTo("POST") == 0) {
                 havePost = true;
             }
 
             String info[] = getInfo(in, havePost); // Get referer and post information
-            String extension = extractExtension(file);
+            String extension = extractExtension(fileName[FILE]);
             boolean exist = true;
 
             System.out.println("Extension: " + extension+ ".");
@@ -128,8 +132,9 @@ public class Server extends Thread {
             if(extension.compareTo("406")==0){
                 hasExtension = false;
             }
-            if(file.compareTo(DEFAULT)!=0){
-                exist = this.fileExist(file);// if is not default directory, check if file exist
+            if(fileName[FILE].compareTo(DEFAULT)!=0){
+
+                exist = this.fileExist(fileName[FILE]);// if is not default directory, check if file exist
             }
 
             /*//Prueba de 404
@@ -149,10 +154,15 @@ public class Server extends Thread {
                             System.out.println("----------------------MEDIA SUPPORTED-------------------");
                             if (method[METHOD].compareTo("GET") == 0) {
                                 System.out.println("It's a get");
-                                this.GET(mimeTypesVerify.get(extension), out, binaryOut, in, method[URL]);
-                                view.writeInLog("GET", info[REFERER], method[URL], ""); //Writes the successful GET
+                                this.GET(mimeTypesVerify.get(extension), out, binaryOut, in, fileName[FILE]);
+
+                                if(fileName.length == 2) {
+                                    data = fileName[DATA];
+                                }
+
+                                view.writeInLog("GET", info[REFERER], fileName[FILE], data); //Writes the successful GET
                             } else {
-                                view.writeInLog("HEAD", info[REFERER], method[URL], ""); //Writes the successful GET TODO verifY if is writing
+                                view.writeInLog("HEAD", info[REFERER], method[URL], data); //Writes the successful GET TODO verifY if is writing
                                 this.HEAD(mimeTypesVerify.get(extension),out, binaryOut, in, method[URL]);
                                 System.out.println("Its a head");
                             }
@@ -183,6 +193,10 @@ public class Server extends Thread {
         }
     }
 
+
+    private String getQuery() {
+    return "";
+    }
 
     //Get info if exist line exists
     private String[] getInfo(BufferedReader in, boolean havePost) {
@@ -239,6 +253,7 @@ public class Server extends Thread {
 
     private boolean fileExist( String file){
         boolean exist = false;
+        System.out.println("FILE: " + file);
         File f = new File("server"+file);
         exist = f.exists();
 
