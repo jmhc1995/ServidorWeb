@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement />
+  <nodes>
+    <node x="0.0" y="344.0">Server</node>
+    <node x="313.0" y="842.0">Connection</node>
+    <node x="296.5" y="966.0">Controller</node>
+    <node x="181.5" y="0.0">View</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="Server" target="View">
+      <point x="0.0" y="-224.0" />
+      <point x="250.5" y="319.0" />
+      <point x="281.25" y="319.0" />
+      <point x="-99.75" y="147.0" />
+    </edge>
+    <edge source="Connection" target="Server">
+      <point x="-34.0" y="-37.0" />
+      <point x="347.0" y="817.0" />
+      <point x="250.5" y="817.0" />
+      <point x="0.0" y="224.0" />
+    </edge>
+    <edge source="Connection" target="View">
+      <point x="34.0" y="-37.0" />
+      <point x="415.0" y="817.0" />
+      <point x="511.5" y="817.0" />
+      <point x="511.5" y="319.0" />
+      <point x="480.75" y="319.0" />
+      <point x="99.75" y="147.0" />
+    </edge>
+    <edge source="Controller" target="Connection">
+      <point x="0.0" y="-25.5" />
+      <point x="0.0" y="37.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="1.0" x="390.5" y="167.0" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Fields</Category>
+    <Category>Methods</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

@@ -7,7 +7,7 @@ import java.net.ServerSocket; //Socket util
 public class Connection {
     private static final int PORT = 5000; //Default port
 
-    public static void main(String[] args) {
+    public void run(){
         try {
             ServerSocket server = new ServerSocket(PORT);
             System.out.println("MiniServer active " + PORT);
@@ -20,5 +20,6 @@ public class Connection {
             System.err.println(e);
         }
     }
+
 }
 

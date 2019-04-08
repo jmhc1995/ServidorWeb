@@ -71,10 +71,10 @@ public class View {
     }
 
     public void completeHeader(String stringFile, PrintWriter printWriter) {
+        printWriter.println("Date: " + new Date());
         printWriter.println("Content-Length: " + stringFile.length());
         printWriter.println("Content-Type: text/html");
-        printWriter.println("Server: JavaServer");
-        printWriter.println("Date: " + new Date());
+        printWriter.println("Server: Stratosphere");
         printWriter.println("Connection: close");
         printWriter.println();
         printWriter.println(stringFile); //Content
@@ -86,9 +86,10 @@ public class View {
             String stringFile = getStringFile("server/" + resource); //Ask for the file and converts into string
             //Response header
             out.println("HTTP/1.0 200 OK");
-            out.println("Content-Type: "+mimeType+"; charset=utf-8");
+            out.println("Date: " + new Date());
             out.println("Content-Length: " + stringFile.length());
-            out.println("Server: MINISERVER");
+            out.println("Content-Type: "+mimeType+"; charset=utf-8");
+            out.println("Server: Stratosphere");
             // este linea en blanco marca el final de los headers de la response
             out.println("");
             out.println(stringFile); //Content
@@ -98,6 +99,8 @@ public class View {
 
             try {
                 binaryOut.writeBytes("HTTP/1.0 200 OK\r\n");
+                binaryOut.writeBytes("Date: "+ new Date()+"\r\n");
+                binaryOut.writeBytes("Server: Stratosphere\r\n");
                 binaryOut.writeBytes("Content-Type: "+mimeType+"\r\n");
                 binaryOut.writeBytes("Content-Length: " + data.length);
                 binaryOut.writeBytes("\r\n\r\n");
@@ -112,9 +115,10 @@ public class View {
     public void sendHeader(PrintWriter out, String resource, String mimeType){
         String stringFile = getStringFile("server/" + resource);
         out.println("HTTP/1.0 200 OK");
+        out.println("Date: " + new Date());
         out.println("Content-Type: "+mimeType+"; charset=utf-8");
         out.println("Content-Length: " + stringFile.length());
-        out.println("Server: MINISERVER");
+        out.println("Server: Stratosphere");
         // este linea en blanco marca el final de los headers de la response
         out.println("");
     }
